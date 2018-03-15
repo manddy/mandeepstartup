@@ -1,9 +1,11 @@
 package com.mandeep.officialcode;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -18,8 +20,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.mandeep.officialcode.Utils.FirebaseMethods;
 
 import butterknife.BindView;
 import butterknife.BindView;
@@ -28,174 +34,170 @@ import butterknife.ButterKnife;
 import static android.app.ProgressDialog.*;
 
 public class SignupActivity extends AppCompatActivity {
-    private static final String TAG = "SignupActivity";
-    private DatabaseReference mDataBase;
-    @BindView(R.id.input_name)
-    EditText _nameText;
-    @BindView(R.id.input_id)
-    EditText _IdText;
-    @BindView(R.id.input_email)
-    EditText _email;
-    @BindView(R.id.input_age)
-    EditText _age;
-    @BindView(R.id.input_password)
-    EditText _passwordText;
-    @BindView(R.id.input_reEnterPassword)
-    EditText _reEnterPasswordText;
-    @BindView(R.id.btn_signup)
-    Button _signupButton;
-    @BindView(R.id.link_login)
-    TextView _loginLink;
-    private ProgressDialog progressDialog;
-    private FirebaseAuth firebaseAuth;
+
+    private static final String TAG = "RegisterActivity";
+
+    private Context mContext;
+    private String email, username, password,retypePassword,datsmeid;
+    private int age;
+    private EditText mEmail, mPassword,mRetypePassword, mUsername,mdatsmeid,mAge;
+    private Button btnRegister;
+
+
+    //firebase
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    private FirebaseMethods firebaseMethods;
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference myRef;
+
+    private String append = "";
+
+
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
-        progressDialog=new ProgressDialog(this);
-        mDataBase= FirebaseDatabase.getInstance().getReference("USERS");
-        firebaseAuth=FirebaseAuth.getInstance();
-        ButterKnife.bind(this);
+        mContext = SignupActivity.this;
+        firebaseMethods = new FirebaseMethods(mContext);
+        Log.d(TAG, "onCreate: started.");
 
-        _signupButton.setOnClickListener(new View.OnClickListener() {
+        initWidgets();
+        setupFirebaseAuth();
+        init();
+    }
+
+
+
+
+    /**
+     * Initialize the activity widgets
+     */
+    private void initWidgets(){
+        Log.d(TAG, "initWidgets: Initializing Widgets.");
+        mEmail = findViewById(R.id.input_email);
+        mUsername = findViewById(R.id.input_name);
+        btnRegister = findViewById(R.id.btn_signup);
+        mPassword = findViewById(R.id.input_password);
+        mRetypePassword = findViewById(R.id.input_reEnterPassword);
+        mdatsmeid = findViewById(R.id.input_id);
+//        mAge = findViewById(R.id.input_age);
+        mContext = SignupActivity.this;
+
+    }
+
+
+    private void init(){
+        btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                signup();
+
+                age = 0;
+                username = mUsername.getText().toString();
+                email = mEmail.getText().toString();
+                password = mPassword.getText().toString();
+                retypePassword = mRetypePassword.getText().toString();
+                datsmeid = mdatsmeid.getText().toString();
+
+
+
+
+                if(checkInputs(email, username, password,retypePassword,datsmeid))
+                {
+                    if(firebaseMethods.registerNewEmail(email, password, username))
+                    {
+                        startActivity(new Intent(mContext,profileuser.class));
+                    }
+                }
             }
         });
+    }
 
-        _loginLink.setOnClickListener(new View.OnClickListener() {
+    private boolean checkInputs(String email, String username, String password, String retypePassword,String id){
+        Log.d(TAG, "checkInputs: checking inputs for null values.");
+        if(email.equals("") || username.equals("") || password.equals("") || retypePassword.equals("")  || id.equals("") || !password.equals(retypePassword)
+                || email == null || username == null || password == null || retypePassword == null || id == null){
+            Toast.makeText(mContext, "All fields must be filled out correctly.", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isStringNull(String string){
+        Log.d(TAG, "isStringNull: checking string if null.");
+
+        if(string.equals("")){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+     /*
+    ------------------------------------ Firebase ---------------------------------------------
+     */
+
+    /**
+     * Setup the firebase auth object
+     */
+    private void setupFirebaseAuth(){
+        Log.d(TAG, "setupFirebaseAuth: setting up firebase auth.");
+
+        mAuth = FirebaseAuth.getInstance();
+        mFirebaseDatabase =FirebaseDatabase.getInstance();
+        myRef = mFirebaseDatabase.getReference();
+
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
-            public void onClick(View v) {
-                // Finish the registration screen and return to the Login activity
-                Intent intent = new Intent(getApplicationContext(),LoginActivity.class);
-                startActivity(intent);
-                finish();
-                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+
+                if (user != null) {
+                    // User is signed in
+                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                    myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+
+                            //checking if username already taken
+
+                            if(firebaseMethods.checkIfUsernameExists(username,dataSnapshot))
+                            {
+                                myRef.push().getKey().substring(3,10);
+                                Log.d(TAG, "onDataChange: username exists, appending random string" + append);
+                                username = username+append;
+                            }
+                            //String name, String DatsmeId, String email, int age, double lattitude, double longitude,String photourl
+//                            firebaseMethods.addNewUser(username,"","",0,0,0,"");
+                            Toast.makeText(mContext, "Signup Success", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                } else {
+                    // User is signed out
+                    Log.d(TAG, "onAuthStateChanged:signed_out");
+                }
+                // ...s
             }
-        });
-    }
-    private void saveUserInformation()
-    {
-        String naam=_nameText.getText().toString().trim();
-        String id=_IdText.getText().toString().trim();
-        String mail=_email.getText().toString();
-        String age=_age.getText().toString().trim();
-        String password=_passwordText.getText().toString().trim();
-        Userinformation userinformation=new Userinformation(naam,id,mail,age,password,0,0);
-        mDataBase.child(id).setValue(userinformation);
-//        progressDialog.setMessage("Registering user...");
-//        progressDialog.show();
-//        firebaseAuth.createUserWithEmailAndPassword(mail,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-//            @Override
-//            public void onComplete(@NonNull Task<AuthResult> task) {
-//                progressDialog.dismiss();
-//                if (task.isSuccessful()){
-//                    FirebaseUser user = firebaseAuth.getCurrentUser(); //You Firebase user
-//                    // user registered, start profile activity
-//                    Toast.makeText(SignupActivity.this,"Account Created",Toast.LENGTH_LONG).show();
-//
-//                    finish();
-//                    //startActivity(new Intent(getApplicationContext(), UserMainPage.class));
-//                }
-//                else{
-//                    Toast.makeText(SignupActivity.this,"Could not create account. Please try again",Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
-    }
-    public void signup() {
-
-        //Log.d(TAG, "Signup");
-
-       //if (!validate()) {
-         //   onSignupFailed();
-           //return;
-       // }
-        //_signupButton.setEnabled(false);
-
-        saveUserInformation();
-//        _nameText.getText().clear();;
-//        _IdText.getText().clear();
-//        _email.getText().clear();;
-//        _age.getText().clear();
-//        _passwordText.getText().clear();
-//        _reEnterPasswordText.getText().clear();
-       Intent i=new Intent(SignupActivity.this,profileuser.class);
-        i.putExtra("PersonName",  _nameText.getText().toString().trim());
-        startActivity(i);
-
-
-
-
+        };
     }
 
-
-    public void onSignupSuccess() {
-        _signupButton.setEnabled(true);
-        setResult(RESULT_OK, null);
-        finish();
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
     }
 
-    public void onSignupFailed() {
-        Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
-
-        _signupButton.setEnabled(true);
-    }
-
-    public boolean validate() {
-        boolean valid = true;
-
-        String name = _nameText.getText().toString();
-        String id = _IdText.getText().toString();
-        String email = _email.getText().toString();
-        String age = _age.getText().toString();
-        String password = _passwordText.getText().toString();
-        String reEnterPassword = _reEnterPasswordText.getText().toString();
-
-        if (name.isEmpty() || name.length() < 3) {
-            _nameText.setError("at least 3 characters");
-            valid = false;
-        } else {
-            _nameText.setError(null);
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
         }
-
-        if (id.isEmpty()) {
-            _IdText.setError("Enter Valid Address");
-            valid = false;
-        } else {
-            _IdText.setError(null);
-        }
-
-
-        if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            _email.setError("enter a valid email address");
-            valid = false;
-        } else {
-            _email.setError(null);
-        }
-
-        if (age.isEmpty() || age.length()!=10) {
-            _age.setError("Enter Valid Mobile Number");
-            valid = false;
-        } else {
-            _age.setError(null);
-        }
-
-        if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
-            _passwordText.setError("between 4 and 10 alphanumeric characters");
-            valid = false;
-        } else {
-            _passwordText.setError(null);
-        }
-
-        if (reEnterPassword.isEmpty() || reEnterPassword.length() < 4 || reEnterPassword.length() > 10 || !(reEnterPassword.equals(password))) {
-            _reEnterPasswordText.setError("Password Do not match");
-            valid = false;
-        } else {
-            _reEnterPasswordText.setError(null);
-        }
-
-        return valid;
     }
 }
