@@ -1,0 +1,60 @@
+<resources>
+    <string name="app_name">Officialcode</string>
+
+    <string name="question1">1. How would you prefer to spend a Friday/Saturday night/afternoon?</string>
+    <string name="question1_choice1">Sleeping early/in.</string>
+    <string name="question1_choice2">Out with Friends.</string>
+    <string name="question1_choice3">Learning a new skill/Engaging in a constructive activity.</string>
+
+    <string name="question2">2. What is your preferred mode of communication?</string>
+    <string name="question2_choice1">Phone/Video call.</string>
+    <string name="question2_choice2">Texting</string>
+    <string name="question2_choice3">Physical interaction.</string>
+
+    <string name="question3">3.Privacy is one of the most important things in my life.</string>
+    <string name="question3_choice1"> Agree</string>
+    <string name="question3_choice2">Disagree</string>
+    <string name="question3_choice3">No comments</string>
+
+    <string name="question4">4. How often do you consume alcohol?</string>
+    <string name="question4_choice1">Never</string>
+    <string name="question4_choice2">Occasionaly</string>
+    <string name="question4_choice3">At social gatherings</string>
+
+    <string name="question5">5. Do you smoke?</string>
+    <string name="question5_choice1">Never</string>
+    <string name="question5_choice2">Occasionaly</string>
+    <string name="question5_choice3">Rarely</string>
+
+    <string name="question6">6. You would best describe yourself as:</string>
+    <string name="question6_choice1">Introverted</string>
+    <string name="question6_choice2">Extroverted</string>
+    <string name="question6_choice3">Dont give a shit</string>
+
+    <string name="question7">7.What would you prefer doing when you have time to kill?</string>
+    <string name="question7_choice1">Facebook/Reddit</string>
+    <string name="question7_choice2">Read a Book/Watch a Movie</string>
+    <string name="question7_choice3">Call Or Meet a Friend</string>
+
+    <string name="question8">8. What is you motive when you play a game?</string>
+    <string name="question8_choice1">Win At all costs</string>
+    <string name="question8_choice2">Enjoy the moment</string>
+    <string name="question8_choice3">Neutral</string>
+
+    <string name="question9">9. Does music means more to you than random beats you can dance to?</string>
+    <string name="question9_choice1">I cannot live without it</string>
+    <string name="question9_choice2">Nah, I don’t think so</string>
+    <string name="question9_choice3">Never Thought about that</string>
+
+    <string name="question10">10. Where would be your ideal vacation?</string>
+    <string name="question10_choice1">Trekking on the hills</string>
+    <string name="question10_choice2">beaches</string>
+    <string name="question10_choice3">Road Trip</string>
+
+    <string name="submit_answers">Submit Answers</string>
+    <string name="auth_failed">Failed to authenticate</string>
+    <string name="auth_success">Successfully Logged In</string>
+    <string name="dbname_users">datmefinal</string>
+
+
+</resources>

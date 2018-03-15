@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="5dp"
+    tools:context="com.mandeep.officialcode.MainActivity">
+
+    <ImageView
+        android:id="@+id/ivProfile"
+        android:layout_width="100dp"
+        android:layout_height="70dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="39dp"
+        android:layout_marginTop="103dp"
+        android:layout_toStartOf="@+id/tvName"
+        android:padding="5dp"
+        app:srcCompat="@drawable/sushant" />
+
+    <TextView
+        android:id="@+id/tvName"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_alignEnd="@+id/ratingBar"
+        android:layout_alignTop="@+id/ivProfile"
+        android:gravity="center"
+        android:text="Sushant"
+        android:textSize="22sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvName"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#A9A9A9" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="11dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="3.54"
+                android:textColor="@color/colorAccent"
+                android:textSize="24sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Star Rating"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="11dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="46%"
+                android:textColor="@color/colorPrimary"
+                android:textSize="24sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Compatibility"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/linearLayout"
+        android:layout_marginTop="10dp"
+        android:background="#A9A9A9" />
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/line"
+        android:layout_marginTop="64dp">
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_below="@id/relativeLayout"
+        android:layout_above="@id/line"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true">
+
+    </RelativeLayout>
+
+    <RatingBar
+        android:id="@+id/ratingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/line"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="21dp"
+        android:numStars="5"
+        android:rating="3"
+        android:stepSize="1.0" />
+
+    <TextView
+        android:id="@+id/RateMe"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:layout_alignTop="@+id/relativeLayout"
+        android:layout_centerHorizontal="true"
+        android:text="Your Ratings?"
+        android:textAlignment="center"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+</RelativeLayout>
