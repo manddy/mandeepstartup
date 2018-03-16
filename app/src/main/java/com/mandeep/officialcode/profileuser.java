@@ -18,10 +18,9 @@ import android.widget.TextView;
 
 public class profileuser extends AppCompatActivity {
     public static int RESULT_LOAD_IMAGE_01 = 1;
-//    Button b;
-//    String username;
-//    TextView nammi;
+
     Button btnAddImage;
+    Button btnDiscover;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,12 +32,21 @@ public class profileuser extends AppCompatActivity {
             //b.setOnClickListener(this);
 
         btnAddImage = findViewById(R.id.btnAddImage);
+        btnDiscover = findViewById(R.id.btnDiscover);
 
         btnAddImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(i, RESULT_LOAD_IMAGE_01);
+            }
+        });
+
+        btnDiscover.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(profileuser.this , MapsActivity.class);
+                startActivity(i);
             }
         });
     }
@@ -65,11 +73,4 @@ public class profileuser extends AppCompatActivity {
 
     }
 
-
-//    @Override
-//    public void onClick(View view) {
-//        Intent i=new Intent(profileuser.this,MapsActivity.class);
-//        i.putExtra("PersonName",username);
-//        startActivity(i);
-//    }
 }
